@@ -5,20 +5,18 @@ package com.github.inikolaev.vertx.web.kotlin
  */
 
 import io.vertx.core.Vertx
-import io.vertx.ext.web.Router
 
 fun main(args: Array<String>) {
     val vertx = Vertx.vertx()
-    val router = Router.router(vertx)
 
-    router.get("/kotlin/:name") { context ->
-        val user = context.request().getParam("name")
-        context.response().end("Hello $user!")
+    vertx.httpServer(8080) {
+        get("/user/:name") { context ->
+            val user = context.request().getParam("name")
+            context.response().end("Hello $user!")
+        }
+
+        get { context ->
+            context.response().end("Hello World!")
+        }
     }
-
-    router.get { context ->
-        context.response().end("Hello World!")
-    }
-
-    vertx.createHttpServer().requestHandler { router.accept(it) }.listen(8080)
 }

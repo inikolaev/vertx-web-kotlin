@@ -2,9 +2,9 @@
 
 This library provides Kotlin extension functions for Vert.X Router to make it easier to define routes.
 
-## Example
+## Examples
 
-
+Using `Router` extension functions to define routes:
 
 ```kotlin
 import com.github.inikolaev.vertx.web.kotlin.*
@@ -25,5 +25,26 @@ fun main(args: Array<String>) {
     }
     
     vertx.createHttpServer().requestHandler { router.accept(it) }.listen(8080)
+}
+```
+
+Using `Vertx.httpServer` extension function to create server and define routes:
+
+```kotlin
+import io.vertx.core.Vertx
+
+fun main(args: Array<String>) {
+    val vertx = Vertx.vertx()
+
+    vertx.httpServer(8080) {
+        get("/user/:name") { context ->
+            val user = context.request().getParam("name")
+            context.response().end("Hello $user!")
+        }
+
+        get { context ->
+            context.response().end("Hello World!")
+        }
+    }
 }
 ```

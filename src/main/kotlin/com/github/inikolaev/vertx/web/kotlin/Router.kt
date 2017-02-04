@@ -1,5 +1,7 @@
 package com.github.inikolaev.vertx.web.kotlin
 
+import io.vertx.core.Vertx
+import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
@@ -7,6 +9,24 @@ import io.vertx.ext.web.RoutingContext
 /**
  * Created by inikolaev on 04/02/2017.
  */
+
+inline fun Vertx.httpServer(block: Router.() -> Unit) {
+    httpServer(HttpServerOptions.DEFAULT_PORT, block)
+}
+
+inline fun Vertx.httpServer(port: Int, block: Router.() -> Unit) {
+    val router = Router.router(this)
+    router.block()
+    httpServer(port, router)
+}
+
+inline fun Vertx.httpServer(router: Router) {
+    httpServer(HttpServerOptions.DEFAULT_PORT, router)
+}
+
+inline fun Vertx.httpServer(port: Int, router: Router) {
+    createHttpServer().requestHandler { router.accept(it) }.listen(port)
+}
 
 fun Router.get(handler: (RoutingContext) -> Unit) : Route = get().handler(handler)
 fun Router.get(path: String, handler: (RoutingContext) -> Unit) : Route = get(path).handler(handler)
