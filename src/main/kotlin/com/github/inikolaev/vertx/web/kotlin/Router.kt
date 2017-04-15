@@ -26,7 +26,7 @@ inline fun Vertx.httpServer(router: Router, options: HttpServerOptions = HttpSer
     httpServer(HttpServerOptions.DEFAULT_PORT, options, router)
 }
 
-inline fun Vertx.httpServer(port: Int, options: HttpServerOptions = HttpServerOptions(), router: Router) {
+inline fun Vertx.httpServer(port: Int, router: Router, options: HttpServerOptions = HttpServerOptions()) {
     createHttpServer(options).requestHandler { router.accept(it) }.listen(port)
 }
 
