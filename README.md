@@ -1,10 +1,10 @@
 # vertx-web-kotlin
 
-This library provides Kotlin extension functions for Vert.X Router to make it easier to define routes.
+This library provides Kotlin extension functions for Vert.X Web to make it easier to define routes and work with requests and responses.
 
 ## Examples
 
-Using `Router` extension functions to define routes:
+#### Using `Router` extension functions to define routes
 
 ```kotlin
 import com.github.inikolaev.vertx.web.kotlin.*
@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Using `Vertx.httpServer` extension function to create server and define routes:
+#### Using `Vertx.httpServer` extension function to create server and define routes
 
 ```kotlin
 import io.vertx.core.Vertx
@@ -49,7 +49,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Enabling CORS:
+#### Enabling CORS
 
 ```kotlin
 import com.github.inikolaev.vertx.web.kotlin.*
@@ -58,7 +58,6 @@ import io.vertx.ext.web.Router
 
 fun main(args: Array<String>) {
     val vertx = Vertx.vertx()
-    val router = Router.router(vertx)
     
     vertx.httpServer(8080) {
         cors("*")
@@ -71,7 +70,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Responding with JSON:
+#### Responding with JSON
 
 ```kotlin
 import com.github.inikolaev.vertx.web.kotlin.*
@@ -82,7 +81,6 @@ import io.vertx.kotlin.core.json.obj
 
 fun main(args: Array<String>) {
     val vertx = Vertx.vertx()
-    val router = Router.router(vertx)
 
     vertx.httpServer(8080) {
         get("/user/:name") { context ->
