@@ -1,32 +1,50 @@
 package com.github.inikolaev.vertx.web.kotlin
 
 import io.vertx.core.Vertx
+import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.impl.RouterImpl
 
 /**
  * Created by inikolaev on 04/02/2017.
  */
 
-inline fun Vertx.httpServer(block: Router.() -> Unit) {
-    httpServer(HttpServerOptions.DEFAULT_PORT, block)
+inline fun Vertx.httpServer(options: HttpServerOptions = HttpServerOptions(), block: Router.() -> Unit) {
+    httpServer(HttpServerOptions.DEFAULT_PORT, options, block)
 }
 
-inline fun Vertx.httpServer(port: Int, block: Router.() -> Unit) {
+inline fun Vertx.httpServer(port: Int, options: HttpServerOptions = HttpServerOptions(), block: Router.() -> Unit) {
     val router = Router.router(this)
     router.block()
-    httpServer(port, router)
+    httpServer(port, options, router)
 }
 
-inline fun Vertx.httpServer(router: Router) {
-    httpServer(HttpServerOptions.DEFAULT_PORT, router)
+inline fun Vertx.httpServer(router: Router, options: HttpServerOptions = HttpServerOptions()) {
+    httpServer(HttpServerOptions.DEFAULT_PORT, options, router)
 }
 
-inline fun Vertx.httpServer(port: Int, router: Router) {
-    createHttpServer().requestHandler { router.accept(it) }.listen(port)
+inline fun Vertx.httpServer(port: Int, options: HttpServerOptions = HttpServerOptions(), router: Router) {
+    createHttpServer(options).requestHandler { router.accept(it) }.listen(port)
 }
+
+fun Router.cors(pattern: String) : Route = route(CorsHandler.create(pattern)
+        .allowedMethod(HttpMethod.GET)
+        .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS.toString())
+        .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS.toString())
+        .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS.toString())
+        .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN.toString())
+        .allowedHeader(HttpHeaders.CONTENT_TYPE.toString())
+        .allowedHeader("X-FLOW-ID")
+        .allowCredentials(true))
+
+fun Router.route(handler: (RoutingContext) -> Unit) : Route = route().handler(handler)
+fun Router.route(method: HttpMethod, path: String, handler: (RoutingContext) -> Unit) : Route = route(method, path).handler(handler)
+fun Router.route(path: String, handler: (RoutingContext) -> Unit) : Route = route(path).handler(handler)
+fun Router.routeWithRegex(method: HttpMethod, path: String, handler: (RoutingContext) -> Unit) : Route = routeWithRegex(method, path).handler(handler)
+fun Router.routeWithRegex(path: String, handler: (RoutingContext) -> Unit) : Route = routeWithRegex(path).handler(handler)
 
 fun Router.get(handler: (RoutingContext) -> Unit) : Route = get().handler(handler)
 fun Router.get(path: String, handler: (RoutingContext) -> Unit) : Route = get(path).handler(handler)
