@@ -30,7 +30,7 @@ inline fun Vertx.httpServer(port: Int, router: Router, options: HttpServerOption
     createHttpServer(options).requestHandler { router.accept(it) }.listen(port)
 }
 
-fun Router.cors(pattern: String) : Route = route(CorsHandler.create(pattern)
+fun Router.cors(pattern: String = "*") : Route = route(CorsHandler.create(pattern)
         .allowedMethod(HttpMethod.GET)
         .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS.toString())
         .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS.toString())
