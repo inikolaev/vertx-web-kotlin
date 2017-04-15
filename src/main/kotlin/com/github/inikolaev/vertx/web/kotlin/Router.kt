@@ -1,12 +1,13 @@
 package com.github.inikolaev.vertx.web.kotlin
 
 import io.vertx.core.Vertx
+import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.Route
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
-import io.vertx.ext.web.impl.RouterImpl
+import io.vertx.ext.web.handler.CorsHandler
 
 /**
  * Created by inikolaev on 04/02/2017.
@@ -19,18 +20,18 @@ inline fun Vertx.httpServer(options: HttpServerOptions = HttpServerOptions(), bl
 inline fun Vertx.httpServer(port: Int, options: HttpServerOptions = HttpServerOptions(), block: Router.() -> Unit) {
     val router = Router.router(this)
     router.block()
-    httpServer(port, options, router)
+    httpServer(port, router, options)
 }
 
-inline fun Vertx.httpServer(router: Router, options: HttpServerOptions = HttpServerOptions()) {
-    httpServer(HttpServerOptions.DEFAULT_PORT, options, router)
+fun Vertx.httpServer(router: Router, options: HttpServerOptions = HttpServerOptions()) {
+    httpServer(HttpServerOptions.DEFAULT_PORT, router, options)
 }
 
-inline fun Vertx.httpServer(port: Int, router: Router, options: HttpServerOptions = HttpServerOptions()) {
+fun Vertx.httpServer(port: Int, router: Router, options: HttpServerOptions = HttpServerOptions()) {
     createHttpServer(options).requestHandler { router.accept(it) }.listen(port)
 }
 
-fun Router.cors(pattern: String = "*") : Route = route(CorsHandler.create(pattern)
+fun Router.cors(pattern: String = "*") : Route = route().handler(CorsHandler.create(pattern)
         .allowedMethod(HttpMethod.GET)
         .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS.toString())
         .allowedHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS.toString())
